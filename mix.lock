@@ -1,0 +1,2 @@
+%{"mix_ctags": {:git, "https://github.com/rgrinberg/mix_ctags.git", "68271100bb511c0a19405e9b7d840431f273c1b2", []},
+  "monad": {:hex, :monad, "1.0.5"}}
