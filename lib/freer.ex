@@ -25,7 +25,7 @@ defmodule Freer do
 
   def bind({:pure, x}, f), do: f.(x)
   def bind({:impure, x, continuation}, f), do: {:impure, x, &(&1 |> continuation.() |> bind(f))}
- 
+
   def map(freer, f), do: bind(freer, &(return f.(&1)))
 
   def apply(freer_f, freer), do: bind(freer_f, &(freer |> map(&1)))
