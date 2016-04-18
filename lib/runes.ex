@@ -5,7 +5,13 @@ defmodule Freer.Runes do
   defp lift?(g), do: Freer.eta(g)
 
   def return(x), do: Freer.return(x)
-  def bind(freer, f), do: lift?(freer) |> Freer.bind(f)
+
+  def bind(freer, f) do
+    etaf = &(lift?(f.(&1)))
+    lift?(freer) |> Freer.bind(etaf)
+  end
+
   def apply(freer_f, freer), do: lift?(freer_f) |> Freer.apply(lift?(freer)) 
+
   def map(freer, f), do: lift?(freer) |> Freer.map(f) 
 end

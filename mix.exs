@@ -27,6 +27,6 @@ defmodule Freer.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:monad, "~> 1.0"},{ :mix_ctags, github: "rgrinberg/mix_ctags" }]
+    [{ :mix_ctags, github: "rgrinberg/mix_ctags" }]
   end
 end
