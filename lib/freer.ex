@@ -2,10 +2,10 @@ defmodule Freer do
 
 
   defmacro charm(do: body) do
-      quote do
-       import Freer.Runes
-       unquote Macro.postwalk(body, &runes/1)
-       end
+    quote do
+      import Freer.Runes
+      unquote Macro.postwalk(body, &runes/1)
+    end
   end
 
   defp runes({:runes, ctx, [{:<-, _ctx, [lhs, rhs]} | exprs]}), do: binder(lhs, rhs, runes({:runes, ctx, exprs}))
