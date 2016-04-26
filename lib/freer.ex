@@ -9,8 +9,8 @@ defmodule Freer do
   end
 
   defp runes({:runes, ctx, [{:<-, _ctx, [lhs, rhs]} | exprs]}), do: binder(lhs, rhs, runes({:runes, ctx, exprs}))
-  defp runes({:runes, _ctx, [[do: expr]| []]}), do: quote do: unquote(expr) |> Freer.return 
-  defp runes({:runes, ctx, [expr| exprs]}), do: binder(quote do _  end, expr, runes({:runes, ctx, exprs})) 
+  defp runes({:runes, _ctx, [[do: expr]| []]}), do: quote do: unquote(expr) |> Freer.return
+  defp runes({:runes, ctx, [expr| exprs]}), do: binder(quote do _  end, expr, runes({:runes, ctx, exprs}))
   defp runes(x), do: x
 
   defp binder(lhs, rhs, body) do
@@ -24,7 +24,7 @@ defmodule Freer do
   def return(x), do: {:pure, x}
 
   def bind({:pure, x}, f), do: f.(x)
-  def bind({:impure, x, continuation}, f), do: {:impure, x, &(&1 |> continuation.() |> bind(f))}
+  def bind({:impure, x, continuation}, f), do: {:impure, x, fn m -> m |> continuation.() |> bind(f) end}
 
   def map(freer, f), do: bind(freer, &(return f.(&1)))
 
@@ -33,9 +33,11 @@ defmodule Freer do
   def eta(x), do: {:impure, x, &({:pure, &1})}
 
   def interpret(unit, flat_map) do
-    fn 
+    fn
     {:pure, x} -> unit.(x)
-    {:impure, x, cont} -> x |> flat_map.(&(&1 |> cont.() |> interpret(unit, flat_map).()))
+    {:impure, x, cont} ->
+    f = fn m -> m |> cont.() |> interpret(unit, flat_map).() end
+    flat_map.(x, f)
     end
   end
 
